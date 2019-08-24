@@ -293,7 +293,7 @@ post_widget:
 
 # Automatically retain article excerpt.
 auto_excerpt:
-  enable: false
+  enable: true
   length: 150
 
 # Stick post to the top.
@@ -328,7 +328,7 @@ code_word_wrap: false
 # - right
 # 
 # If you empty it, images will show by default.
-img_horizonal_align: 
+img_horizonal_align: center
 
 # Reward
 reward:
