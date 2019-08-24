@@ -1,0 +1,38 @@
+.post-body,
+#recent-posts
+  if (hexo-config('img_horizonal_align'))
+    img
+      display: block
+
+      if (hexo-config('img_horizonal_align') == 'left')
+        margin: 0 auto 0 0
+      else if (hexo-config('img_horizonal_align') == 'right')
+        margin: 0 0 0 auto
+      else
+        margin: auto
+
+.post-body
+  #more
+    border: 0
+
+.post-footer
+  &-end
+    margin: 1rem 0 0
+    text-align: center
+    color: #b6b6b6
+
+    if (hexo-config('post_widget.end_text.horizon_line'))
+      border-top: 1px dashed #e6e6e6
+      padding: 1rem 0 0
+
+    span
+      margin: 0 .1rem
+
+  &-tags
+    margin-bottom: 1rem
+
+    .icon
+      color: $post-tags-icon-color
+
+    span
+      margin: 0 .5rem

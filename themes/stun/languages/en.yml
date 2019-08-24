@@ -1,0 +1,105 @@
+# Site title
+title:
+  home: Home page
+  archives: Archives page
+  categories: Categories page
+  tags: Tags page
+  about: About page
+  friends: friendLinks
+
+# Header nav
+nav:
+  home: Home
+  archives: Archives
+  categories: Categories
+  tags: Tags
+  about: About
+  search: Search
+
+# archives page, categories page, tags page
+page:
+  tags: Tags
+  categories: Categories
+  articles-empty: No articles
+  articles-total: Total %s Articles, Go on!
+
+# Sidebarupdated
+sidebar:
+  overview: Overview
+  catalog: Catalog
+  subscribe: Subscribe
+  archives: Archives
+  categories: Categories
+  tags: Tags
+  read_info: You have read
+
+# 社交链接
+social:
+  github: Github
+  google: Google
+  twitter: Twitter
+  youtube: Youtube
+  segmentfault: Segmentfault
+  zhihu: Zhihu
+  weibo: Weibo
+  wechat: Wechat
+  telegram: Telegram
+  qq: QQ
+
+# Post
+post:
+  created: Created
+  updated: updated
+  posted: Posted
+  word_count: Words
+  reading_count: Visited
+  reading_time: Reading time
+  read_more: Read more
+  fire: Heat
+  sticky: Sticky top
+  untitled: ( Untitled )
+  end: End of text, thank you for reading
+  copyright:
+    author: Author
+    link: Link
+    license_title: Copyright
+    license_content: All articles in this blog are licensed under 
+      <a href="%s" rel="external nofollow" target="_blank">%s</a> unless stating additionally
+
+# Algolia search
+algolia_search:
+  input_placeholder: Search for Posts
+  hits_empty: "We didn't find any results for the search: ${query}"
+  hits_stats: "${hits} results found in ${time} ms"
+
+# Local search
+local_search:
+  input_placeholder: Search for Posts
+  hits_empty: We didn't find any results for the search
+
+# Reward
+reward:
+  btn_text: Buy me a coffee
+  alipay: Alipay
+  wechat: Wechat
+
+# Comment
+comment:
+  gitment:
+    button: Show comments from Gitment
+
+# Back to top
+back2top: Back to top
+
+# Site footer
+footer:
+  powered: Powered by %s
+  theme: Theme
+  uv: Visitors
+  pv: Views
+
+# Global notification
+notification:
+  copy:
+    success: Copy Success
+    error: Copy Error

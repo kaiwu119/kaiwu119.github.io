@@ -1,0 +1,16 @@
+doctype html
+html(lang=config.language)
+  head
+    include ./head.pug
+  body
+    #container
+      include ./header.pug
+      include ./main.pug
+      include ./footer.pug
+
+      if theme.back2top.enable
+        include ../_components/back2top.pug
+    
+    include ../_components/search/index.pug
+    include ../_scripts/cdn.pug
+    include ../_scripts/common.pug

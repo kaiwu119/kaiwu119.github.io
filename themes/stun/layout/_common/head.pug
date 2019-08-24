@@ -1,0 +1,76 @@
+-
+  var pageTitle = page.title || config.subtitle || ""
+
+  if (page.type === "tags") pageTitle = _p("title.tags")
+  if (page.type === "categories") pageTitle = _p("title.categories")
+  if (is_archive()) pageTitle = _p("title.archives")
+  if (is_tag()) pageTitle = _p("title.tags") + ": " + page.tag
+  if (is_category()) pageTitle = _p("title.categories") + ": " + page.category
+  if (is_month()) pageTitle += ": " + page.year + "/" + page.month
+  if (is_year()) pageTitle += ": " + page.year
+
+  pageTitle ? pageTitle += " | " + config.title : pageTitle = config.title
+
+  var pageDescription = page.description || page.title || config.description || ""
+  var pageKeywords = [config.author, config.title, config.keywords].filter(i => !!i).join(", ")
+  var pageAuthor = config.email ? `${config.author}: ${config.email}` : config.author
+  var pageCopyright = config.copyright || config.author
+
+meta(charset="UTF-8")
+meta(http-equiv="X-UA-Compatible" content="IE=edge")
+meta(name="viewport" content="width=device-width, initial-scale=1")
+meta(name="keywords" content=pageKeywords)
+meta(name="author" content=pageAuthor)
+meta(name="description" content=pageDescription)
+meta(name="copyright" content=pageCopyright)
+title= pageTitle
+
+meta(name="format-detection" content="telephone=no")
+meta(name="apple-mobile-web-app-capable" content="yes")
+meta(name="apple-mobile-web-app-status-bar-style" content="black")
+
+if theme.pwa && theme.pwa.enable
+  if theme.pwa.theme_color
+    meta(name="theme-color" content=theme.pwa.theme_color)
+  
+  if theme.pwa.manifest
+    link(rel="manifest" href=`${url_for(theme.pwa.manifest)}?v=${stun_env("version")}`)
+
+if theme.favicon.small
+  link(rel="icon" type="image/png" sizes="16x16" href=`${url_for(theme.favicon.small)}?v=${stun_env("version")}`)
+
+if theme.favicon.medium
+  link(rel="icon" type="image/png" sizes="32x32" href=`${url_for(theme.favicon.medium)}?v=${stun_env("version")}`)
+
+if theme.favicon.apple_touch_icon
+  link(rel="apple-touch-icon" sizes="180x180" href=`${url_for(theme.favicon.apple_touch_icon)}?v=${stun_env("version")}`)
+
+if theme.favicon.safari_pinned_tab
+  link(rel="mask-icon" href=`${url_for(theme.favicon.safari_pinned_tab)}?v=${stun_env("version")}` color="#54bcff")
+
+if theme.favicon.msapplication
+  meta(name="msapplication-TileImage" content=`${url_for(theme.favicon.msapplication)}`)
+  meta(name="msapplication-TileColor" content="#000000")
+
+if theme.feed && theme.feed.rss
+  link(rel="alternate", href=url_for(theme.feed.rss), type="application/atom+xml")
+
+link(rel="dns-prefetch" href="https://cdn.jsdelivr.net")
+
+- var fontawesome_css = 'https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css'
+- if (theme.cdn.fontawesome_css) fontawesome_css = theme.cdn.fontawesome_css
+link(rel="stylesheet" href=fontawesome_css)
+
+if theme.fancybox
+  - var fancybox_css = 'https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css'
+  - if (theme.cdn.fontawesome) fancybox_css = theme.cdn.fontawesome
+  link(rel="stylesheet" href=fancybox_css)
+
+link(rel="stylesheet" href=`${url_for(theme.css)}/index.css?v=${stun_env("version")}`)
+
+include ../_third-party/analytics/index.pug
+include ../_third-party/search/index.pug
+include ../_third-party/comments/index.pug
+include ../_third-party/math/index.pug
+include ../_third-party/advertising/index.pug
+include ./config.pug

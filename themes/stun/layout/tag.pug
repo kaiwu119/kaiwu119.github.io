@@ -1,0 +1,11 @@
+extends ./_common/layout.pug
+
+block content
+  include ./_mixins/posts-sort.pug
+  
+  div.content
+    div.tag-inner
+      div.article-sort-title= _p("page.tags") + " - " + page.tag
+      +articleSort(page.posts)
+
+    include ./_components/pagination.pug

@@ -1,0 +1,193 @@
+// $main-width: A calc value.
+// -----------------------------------------
+@media screen and (min-width: $main-responsive-width)
+  #header
+    width: 100%
+
+  .header-nav-inner
+    width: $main-width
+
+  .main-inner
+    width: $main-width
+
+// $md-width: 992px - 0.02px
+// -----------------------------------------
+@media screen and (min-width: $md-width)
+  .header-nav-menu
+    visibility: visible
+    opacity: 1
+
+@media screen and (max-width: $md-width)
+  #header
+    height: 340px
+    background-attachment: local
+
+  #footer
+    background-attachment: local
+
+  #main
+    margin: 1rem 0
+
+  #sidebar
+    display: none
+
+  .main-inner
+    width: 100%
+
+  .content
+    padding: .8rem
+    width: 100%
+
+  #recent-posts article.post
+    margin: 0 0 1rem
+    padding: .8rem 1rem
+
+  .header-nav-menu
+    visibility: hidden
+    border-radius: 3px
+    height: auto
+    background-color: alpha($header-nav-bg-color, .7)
+    opacity: 0
+    transform: translate(-1.5rem, 2.5rem)
+
+    span
+      float: none
+      margin: 0
+
+    a
+      padding: 0 1rem
+      color: $white-light !important
+      user-select: none
+
+      &:hover
+        color: $white-light
+        background-color: $blue-lighter
+
+  .header-nav-menu-icon
+    display: block
+    float: left
+
+  .friends-plugin
+    .friends-item
+      width: calc(50% - 10px)
+
+// sm-width: 768px - 0.02px
+// -----------------------------------------
+@media screen and (max-width: $sm-width)
+  .header-info-inner
+    .header-info-title
+      font-size: 3.25rem
+
+    .header-info-subtitle
+      font-size: 1rem
+
+  div.algolia-popup,
+  div.localsearch-popup
+    top: 0
+    left: 0
+    margin: 0
+    border-radius: 0
+    width: 100%
+    height: 100vh
+    max-height: 100vh
+
+  div.localsearch-result
+    max-height: calc(100vh - 6rem)
+
+// $xs-width: 576px - 0.02px
+// -----------------------------------------
+@media screen and (min-width: $xs-width)
+  .content
+    font-size: $font-size-large
+
+  .sidebar-inner
+    font-size: $font-size-large
+
+  .footer-inner
+    font-size: $font-size-large
+
+@media screen and (max-width: $xs-width)
+  #header
+    height: 240px
+
+  #main
+    margin: .8rem 0
+
+  .content
+    padding: .8rem .6rem
+    font-size: $font-size-base
+
+  .home-content
+    padding: 0
+
+  #recent-posts article.post
+    margin: 0 0 .8rem
+    padding: .8rem
+
+  .header-info-inner
+    .header-info-title
+      font-size: 1.8rem
+
+    .header-info-subtitle
+      font-size: $font-size-base
+
+  .header-nav-search
+    span
+      display: none
+
+  div.algolia-results
+    max-height: 10rem
+
+    .algolia-hit-item
+      margin: 0
+
+  .post-header
+    font-size: $font-size-base
+
+    .post-title
+      font-size: 1.2rem
+
+    .post-meta
+      &-create,
+      &-read,
+      &-word
+        :first-child
+          display: none
+
+      .dot
+        margin: 0 .3rem
+
+  .archive-inner
+    margin-left: .5rem
+
+    .article-sort-title
+      margin-bottom: .8rem
+
+    .article-sort-item
+      margin-bottom: .5rem
+
+  .comments
+    .gitment-editor-tab
+      padding: 11px 8px
+
+    .gitment-editor-login
+      margin-right: 8px
+
+    .gitment-editor-footer-tip
+      margin-bottom: 10px
+
+  .gallery-image
+    width: 100%
+
+  div.algolia-popup,
+  div.localsearch-popup
+    padding: .8rem .6rem 1rem
+
+  div.localsearch-result
+    & > ul
+      padding-left: 1rem
+
+  .friends-plugin
+    .friends-item
+      padding: .5rem
+      width: 100%

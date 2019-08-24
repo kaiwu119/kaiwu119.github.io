@@ -1,0 +1,37 @@
+extends ./_common/layout.pug
+
+block content
+  include ./_mixins/post-header.pug
+  include ./_mixins/gallery.pug
+  
+  div.content.headings.code-highlight
+    +postHeader(page)
+    
+    div.post-body
+      if page.photos && page.photos.length
+        +gallery(page)
+      
+      != page.content
+
+    footer.post-footer
+      if theme.post_widget.end_text.enable
+        div.post-footer-end
+          span= "------"
+          span= _p("post.end")
+          span= "------"
+    
+      - let themeConfigCC = theme.creative_commons.enable && theme.creative_commons.post
+      if page.copyright === false ? page.copyright : themeConfigCC
+        include ./_components/copyright.pug
+
+      if theme.post_widget.tags
+        if page.tags && page.tags.length > 0
+          div.post-footer-tags
+            i.fa.fa-tags.icon
+            each tag in page.tags.data
+              span!= link_to(tag.permalink, tag.name)
+      
+      if page.reward === false ? page.reward : (theme.reward && theme.reward.enable)
+        include ./_components/reward.pug
+      
+      include ./_components/pagination.pug
