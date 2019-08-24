@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://kaiwu119.github.io/"/>
-  <updated>2019-08-24T09:34:16.289Z</updated>
+  <updated>2019-08-24T10:28:56.469Z</updated>
   <id>https://kaiwu119.github.io/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://kaiwu119.github.io/2019/08/24/%E4%B8%89%E7%BB%B4%E6%A0%91%E6%9C%A8%E5%BB%BA%E6%A8%A1%E6%96%B9%E6%B3%95/"/>
     <id>https://kaiwu119.github.io/2019/08/24/三维树木建模方法/</id>
     <published>2019-08-24T07:45:45.000Z</published>
-    <updated>2019-08-24T09:34:16.289Z</updated>
+    <updated>2019-08-24T10:28:56.469Z</updated>
     
     <summary type="html">
     
@@ -38,7 +38,9 @@
       <category term="图形学" scheme="https://kaiwu119.github.io/categories/%E5%9B%BE%E5%BD%A2%E5%AD%A6/"/>
     
     
-      <category term="图形学 建模" scheme="https://kaiwu119.github.io/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6-%E5%BB%BA%E6%A8%A1/"/>
+      <category term="图形学" scheme="https://kaiwu119.github.io/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/"/>
+    
+      <category term="建模" scheme="https://kaiwu119.github.io/tags/%E5%BB%BA%E6%A8%A1/"/>
     
   </entry>
   
