@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://kaiwu119.github.io/"/>
-  <updated>2019-08-24T09:17:34.202Z</updated>
+  <updated>2019-08-24T09:34:16.289Z</updated>
   <id>https://kaiwu119.github.io/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://kaiwu119.github.io/2019/08/24/%E4%B8%89%E7%BB%B4%E6%A0%91%E6%9C%A8%E5%BB%BA%E6%A8%A1%E6%96%B9%E6%B3%95/"/>
     <id>https://kaiwu119.github.io/2019/08/24/三维树木建模方法/</id>
     <published>2019-08-24T07:45:45.000Z</published>
-    <updated>2019-08-24T09:17:34.202Z</updated>
+    <updated>2019-08-24T09:34:16.289Z</updated>
     
     <summary type="html">
     
@@ -67,35 +67,6 @@
       <category term="Testing" scheme="https://kaiwu119.github.io/tags/Testing/"/>
     
       <category term="default" scheme="https://kaiwu119.github.io/tags/default/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>my first blog</title>
-    <link href="https://kaiwu119.github.io/2019/08/19/my-first-blog/"/>
-    <id>https://kaiwu119.github.io/2019/08/19/my-first-blog/</id>
-    <published>2019-08-19T03:04:52.000Z</published>
-    <updated>2019-08-23T14:20:54.820Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;这是我用于测试的一个文档&lt;/p&gt;
-&lt;h2 id=&quot;开始&quot;&gt;&lt;a href=&quot;#开始&quot; class=&quot;headerlink&quot; title=&quot;开始&quot;&gt;&lt;/a&gt;开始&lt;/h2&gt;&lt;h3 id=&quot;小标题&quot;&gt;&lt;a href=&quot;#小标题&quot; class=&quot;headerlink&quot;
-        
-      
-    
-    </summary>
-    
-      <category term="Test1" scheme="https://kaiwu119.github.io/categories/Test1/"/>
-    
-    
-      <category term="Testing" scheme="https://kaiwu119.github.io/tags/Testing/"/>
-    
-      <category term="My new" scheme="https://kaiwu119.github.io/tags/My-new/"/>
     
   </entry>
   
