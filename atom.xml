@@ -5,9 +5,9 @@
   <subtitle>热爱生活，记录与分享</subtitle>
   <link href="/atom.xml" rel="self"/>
   
-  <link href="https://github.com/kaiwu119/"/>
-  <updated>2019-08-24T08:26:47.319Z</updated>
-  <id>https://github.com/kaiwu119/</id>
+  <link href="https://kaiwu119.github.io/"/>
+  <updated>2019-08-24T09:17:34.202Z</updated>
+  <id>https://kaiwu119.github.io/</id>
   
   <author>
     <name>KaiWu</name>
@@ -18,10 +18,10 @@
   
   <entry>
     <title>三维树木建模方法</title>
-    <link href="https://github.com/kaiwu119/2019/08/24/%E4%B8%89%E7%BB%B4%E6%A0%91%E6%9C%A8%E5%BB%BA%E6%A8%A1%E6%96%B9%E6%B3%95/"/>
-    <id>https://github.com/kaiwu119/2019/08/24/三维树木建模方法/</id>
+    <link href="https://kaiwu119.github.io/2019/08/24/%E4%B8%89%E7%BB%B4%E6%A0%91%E6%9C%A8%E5%BB%BA%E6%A8%A1%E6%96%B9%E6%B3%95/"/>
+    <id>https://kaiwu119.github.io/2019/08/24/三维树木建模方法/</id>
     <published>2019-08-24T07:45:45.000Z</published>
-    <updated>2019-08-24T08:26:47.319Z</updated>
+    <updated>2019-08-24T09:17:34.202Z</updated>
     
     <summary type="html">
     
@@ -35,17 +35,17 @@
     
     </summary>
     
-      <category term="图形学" scheme="https://github.com/kaiwu119/categories/%E5%9B%BE%E5%BD%A2%E5%AD%A6/"/>
+      <category term="图形学" scheme="https://kaiwu119.github.io/categories/%E5%9B%BE%E5%BD%A2%E5%AD%A6/"/>
     
     
-      <category term="图形学 建模" scheme="https://github.com/kaiwu119/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6-%E5%BB%BA%E6%A8%A1/"/>
+      <category term="图形学 建模" scheme="https://kaiwu119.github.io/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6-%E5%BB%BA%E6%A8%A1/"/>
     
   </entry>
   
   <entry>
     <title>Hello World</title>
-    <link href="https://github.com/kaiwu119/2019/08/24/hello-world/"/>
-    <id>https://github.com/kaiwu119/2019/08/24/hello-world/</id>
+    <link href="https://kaiwu119.github.io/2019/08/24/hello-world/"/>
+    <id>https://kaiwu119.github.io/2019/08/24/hello-world/</id>
     <published>2019-08-24T06:35:26.469Z</published>
     <updated>2019-08-23T14:20:56.424Z</updated>
     
@@ -61,19 +61,19 @@
     
     </summary>
     
-      <category term="Test2" scheme="https://github.com/kaiwu119/categories/Test2/"/>
+      <category term="Test2" scheme="https://kaiwu119.github.io/categories/Test2/"/>
     
     
-      <category term="Testing" scheme="https://github.com/kaiwu119/tags/Testing/"/>
+      <category term="Testing" scheme="https://kaiwu119.github.io/tags/Testing/"/>
     
-      <category term="default" scheme="https://github.com/kaiwu119/tags/default/"/>
+      <category term="default" scheme="https://kaiwu119.github.io/tags/default/"/>
     
   </entry>
   
   <entry>
     <title>my first blog</title>
-    <link href="https://github.com/kaiwu119/2019/08/19/my-first-blog/"/>
-    <id>https://github.com/kaiwu119/2019/08/19/my-first-blog/</id>
+    <link href="https://kaiwu119.github.io/2019/08/19/my-first-blog/"/>
+    <id>https://kaiwu119.github.io/2019/08/19/my-first-blog/</id>
     <published>2019-08-19T03:04:52.000Z</published>
     <updated>2019-08-23T14:20:54.820Z</updated>
     
@@ -90,12 +90,12 @@
     
     </summary>
     
-      <category term="Test1" scheme="https://github.com/kaiwu119/categories/Test1/"/>
+      <category term="Test1" scheme="https://kaiwu119.github.io/categories/Test1/"/>
     
     
-      <category term="Testing" scheme="https://github.com/kaiwu119/tags/Testing/"/>
+      <category term="Testing" scheme="https://kaiwu119.github.io/tags/Testing/"/>
     
-      <category term="My new" scheme="https://github.com/kaiwu119/tags/My-new/"/>
+      <category term="My new" scheme="https://kaiwu119.github.io/tags/My-new/"/>
     
   </entry>
   
