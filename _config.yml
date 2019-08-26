@@ -126,3 +126,12 @@ live2d:
     opacityDefault: 0.5
     opacityOnHover: 0.5
     opacity: 0.7
+
+Plugins:
+- hexo-generator-sitemap
+- hexo-generator-baidu-sitemap
+
+sitemap:
+  path: sitemap.xml
+baidusitemap:
+  path: baidusitemap.xml

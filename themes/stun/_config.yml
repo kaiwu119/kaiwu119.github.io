@@ -484,7 +484,7 @@ canvas_ribbon:
 # Canvas-nest
 # Dependencies: https://github.com/hustcc/canvas-nest.js
 canvas_nest:
-  enable: false
+  enable: true
   # Display on mobile or not
   onmobile: true
   # RGB values, use ',' to separate
