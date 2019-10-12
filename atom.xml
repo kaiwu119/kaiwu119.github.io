@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://kaiwu119.github.io/"/>
-  <updated>2019-08-24T10:28:56.469Z</updated>
+  <updated>2019-10-12T13:26:56.236Z</updated>
   <id>https://kaiwu119.github.io/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>PCA实例和python实现</title>
+    <link href="https://kaiwu119.github.io/2019/10/12/PCA%E5%AE%9E%E4%BE%8B%E5%92%8Cpython%E5%AE%9E%E7%8E%B0/"/>
+    <id>https://kaiwu119.github.io/2019/10/12/PCA实例和python实现/</id>
+    <published>2019-10-12T13:04:46.000Z</published>
+    <updated>2019-10-12T13:26:56.236Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;本文给出一个PCA的具体实例和源码：&lt;/p&gt;
+&lt;h2 id=&quot;PCA算法&quot;&gt;&lt;a href=&quot;#PCA算法&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="模式识别" scheme="https://kaiwu119.github.io/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB/"/>
+    
+    
+      <category term="模式识别" scheme="https://kaiwu119.github.io/tags/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB/"/>
+    
+      <category term="数据降维" scheme="https://kaiwu119.github.io/tags/%E6%95%B0%E6%8D%AE%E9%99%8D%E7%BB%B4/"/>
+    
+  </entry>
   
   <entry>
     <title>三维树木建模方法</title>
