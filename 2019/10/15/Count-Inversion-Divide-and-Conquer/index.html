@@ -1,0 +1,325 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="keywords" content="KaiWu, KaiWu'Blog"><meta name="author" content="KaiWu"><meta name="description" content="Count Inversion ( Divide and Conquer)"><meta name="copyright" content="KaiWu"><title>Count Inversion ( Divide and Conquer) | KaiWu'Blog</title><meta name="format-detection" content="telephone=no"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="theme-color" content="#54bcff"><link rel="manifest" href="/manifest.json?v=1.2.2"><link rel="icon" type="image/png" sizes="16x16" href="/images/icons/favicon-16x16.png?v=1.2.2"><link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32x32.png?v=1.2.2"><link rel="alternate" href="/atom.xml" type="application/atom+xml"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><link rel="stylesheet" href="/css/index.css?v=1.2.2"><script async src="https://cdn.jsdelivr.net/gh/sukkaw/busuanzi@latest/bsz.pure.mini.js"></script><script>window.addEventListener('load', function () {
+  $('.header-nav-search').on('click', function (e) {
+    e.stopPropagation();
+
+    $('body').css('overflow', 'hidden');
+    $('.localsearch-popup')
+      .velocity('stop')
+      .velocity('transition.expandIn', {
+        duration: 300,
+        complete: function () {
+          $('.localsearch-popup input').focus();
+        }
+      });
+    $('.localsearch-mask')
+      .velocity('stop')
+      .velocity('transition.fadeIn', {
+        duration: 300
+      });
+    
+    initSearch();
+  });
+
+  $('.localsearch-mask, .localsearch-close').on('click', function () {
+    closeSearch();
+  });
+
+  $(document).on('keydown', function (e) {
+    // Escape <=> 27
+    if (e.keyCode === Stun.utils.codeToKeyCode('Escape')) {
+      closeSearch();
+    }
+  });
+
+  var isXML = true;
+  var search_path = 'search.xml';
+  
+  if (!search_path) {
+    search_path = 'search.xml';
+  } else if (/json$/i.test(search_path)) {
+    isXML = false;
+  }
+  
+  var path = '/' + search_path;
+
+  function initSearch() {
+    $.ajax({
+      url: path,
+      dataType: isXML ? 'xml' : 'json',
+      async: true,
+      success: function (res) {
+        var datas = isXML ? $('entry', res).map(function () {
+          // 将 XML 转为 JSON
+          return {
+            title: $('title', this).text(),
+            content: $('content', this).text(),
+            url: $('url', this).text()
+          };
+        }).get() : res;
+
+        var $input = $('.localsearch-input-wrapper input');
+        var $result = $('.localsearch-result');
+
+        // 搜索对象（标题、内容）的权重，影响显示顺序
+        var WEIGHT = { title: 100, content: 1 };
+
+        var searchPost = function () {
+          var searchText = $input.val().toLowerCase().trim();
+          // 根据空白字符分隔关键字
+          var keywords = searchText.split(/[\s]+/);
+          // 搜索结果
+          var matchPosts = [];
+
+          // 有多个关键字时，将原文字整个保存下来
+          if (keywords.length > 1) {
+            keywords.push(searchText);
+          }
+          
+          // 防止未输入字符时搜索
+          if (searchText.length > 0) {
+            datas.forEach(function (data) {
+              var isMatch  = false;
+              
+              // 没有标题的文章使用预设的 i18n 变量代替
+              var title = (data.title && data.title.trim()) || '( 文章无标题 )';
+              var titleLower = title && title.toLowerCase();
+              // 删除 HTML 标签 和 所有空白字符
+              var content = data.content && data.content.replace(/<[^>]+>|\s+/, '');
+              var contentLower = content && content.toLowerCase();
+              // 删除重复的 /
+              var postURL = data.url && decodeURI(data.url).replace(/\/{2,}/, '/');
+              
+              // 标题中匹配到的关键词
+              var titleHitSlice = [];
+              // 内容中匹配到的关键词
+              var contentHitSlice = [];
+
+              keywords.forEach(function (keyword) {
+                /**
+                 * 获取匹配的关键词的索引
+                 * @param {String} keyword 要匹配的关键字
+                 * @param {String} text 原文字
+                 * @param {Boolean} caseSensitive 是否区分大小写
+                 * @param {Number} weight 匹配对象的权重。权重大的优先显示
+                 * @return {Array}
+                 */
+                function getIndexByword (word, text, caseSensitive, weight) {
+                  if (!word || !text) return [];
+                  
+                  var startIndex = 0; // 每次匹配的开始索引
+                  var index = -1;     // 匹配到的索引值
+                  var result = [];    // 匹配结果
+
+                  if (!caseSensitive) {
+                    word = word.toLowerCase();
+                    text = text.toLowerCase();
+                  }
+
+                  while((index = text.indexOf(word, startIndex)) !== -1) {
+                    var hasMatch = false;
+
+                    // 索引位置相同的关键词，保留长度较长的
+                    titleHitSlice.forEach(function (hit) {
+                      if (hit.index === index &&
+                          hit.word.length < word.length) {
+                        hit.word = word;
+                        hasMatch = true;
+                      }
+                    });
+                    startIndex = index + word.length;
+                    !hasMatch && result.push({ index: index, word: word, weight: weight });
+                  }
+
+                  return result;
+                }
+                
+                titleHitSlice = titleHitSlice.concat(
+                  getIndexByword(keyword, titleLower, false, WEIGHT.title));
+                contentHitSlice = contentHitSlice.concat(
+                  getIndexByword(keyword, contentLower, false, WEIGHT.content));
+              });
+              
+              var hitTitle = titleHitSlice.length;
+              var hitContent = contentHitSlice.length;
+
+              if (hitTitle > 0 || hitContent > 0) {
+                isMatch = true;
+              }
+
+              if (isMatch) {
+                ;[titleHitSlice, contentHitSlice].forEach(function (hit) {
+                  // 按照匹配文字的索引的递增顺序排序
+                  hit.sort(function (left, right) {
+                    return left.index - right.index;
+                  });
+                });
+                
+                /**
+                 * 给文本中匹配到的关键词添加标记，从而进行高亮显示
+                 * @param {String} text 原文本
+                 * @param {Array} hitSlice 匹配项的索引信息
+                 * @param {Number} start 开始索引
+                 * @param {Number} end 结束索引
+                 * @return {String}
+                 */
+                function highlightKeyword (text, hitSlice, start, end) {
+                  if (!text || !hitSlice || !hitSlice.length) return;
+
+                  var result = '';
+                  var startIndex = start;
+                  var endIndex = end;
+
+                  hitSlice.forEach(function (hit) {
+                    if (hit.index < startIndex) return;
+
+                    var hitWordEnd = hit.index + hit.word.length;
+
+                    result += text.slice(startIndex, hit.index);
+                    result += '<b>' + text.slice(hit.index, hitWordEnd) + '</b>';
+                    startIndex = hitWordEnd;
+                  });
+                  result += text.slice(startIndex, endIndex);
+
+                  return result;
+                }
+
+                var postData = {};
+                // 文章总的搜索权重
+                var postWeight = titleHitSlice.length * 100 + contentHitSlice.length;
+                // 标记匹配关键词后的标题
+                var postTitle = highlightKeyword(title, titleHitSlice, 0, title.length) || title;
+                // 标记匹配关键词后的内容
+                var postContent;
+                
+                // 截取匹配的第一个字符，前后共 200 个字符来显示
+                if (contentHitSlice.length > 0) {
+                  var firstIndex = contentHitSlice[0].index;
+                  var start = firstIndex > 20 ? firstIndex - 20 : 0;
+                  var end = firstIndex + 180;
+
+                  postContent = highlightKeyword(content, contentHitSlice, start, end);
+                } else { // 未匹配到内容，直接截取前 200 个字符来显示
+                  postContent = content.slice(0, 200);
+                }
+                
+                postData.title = postTitle;
+                postData.content = postContent;
+                postData.url = postURL;
+                postData.weight = postWeight;
+                matchPosts.push(postData);
+              }
+            });
+          }
+
+          var resultInnerHtml = '<ul>';
+          
+          // 按权重递增的顺序排序，使权重大的优先显示
+          matchPosts.sort(function (left, right) {
+            return right.weight - left.weight;
+          });
+          
+          matchPosts.forEach(function (post) {
+            resultInnerHtml += '<li><a class="localsearch-result-title" href="' + post.url + '">';
+            resultInnerHtml += post.title;
+            resultInnerHtml += '</a><div class="localsearch-result-content">';
+            resultInnerHtml += post.content;
+            resultInnerHtml += '</div></li>';
+          });
+          resultInnerHtml += '</ul>';
+          $result.html(resultInnerHtml);
+        };
+
+        $input.on('input', searchPost);
+        $input.on('keypress', function (e) {
+          if (e.keyCode === Stun.utils.codeToKeyCode('Enter')) {
+            searchPost();
+          }
+        });
+      }
+    });
+  }
+
+  function closeSearch () {
+    $('body').css('overflow', 'auto');
+    $('.localsearch-popup')
+      .velocity('stop')
+      .velocity('transition.expandOut', {
+        duration: 300
+      });
+    $('.localsearch-mask')
+      .velocity('stop')
+      .velocity('transition.fadeOut', {
+        duration: 300
+      });
+  }
+});</script><script src="https://cdn.jsdelivr.net/npm/leancloud-storage@latest/dist/av-min.js"></script><script src="https://cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script><script>window.addEventListener('load', function () {
+  var GUEST_INFO = ['nick', 'mail', 'link'];
+  var guest_info = 'nick,mail,link';
+
+  guest_info = guest_info.split(',').filter(function(item) {
+    return GUEST_INFO.indexOf(item) > -1;
+  });
+
+  new Valine({
+    el: '#comments',
+    appId: 'wkv1rRoFXgxv7EeRSzNKjh44-gzGzoHsz',
+    appKey: 'DCFeRbLcpqcNgU57Ccq6SJfG',
+    notify: true,
+    verify: true,
+    placeholder: 'come on, baby！',
+    avatar: 'mp',
+    meta: guest_info,
+    pageSize: '10' || 10,
+    visitor: false,
+    recordIP: false,
+    lang: '' || 'zh-cn'
+  });
+});</script><script>var Stun = window.Stun || {};
+var CONFIG = {
+  root: '/',
+  algolia: undefined,
+  sidebar: {"offsetTop":"20px"},
+  back2top: {"enable":true,"animation":true},
+  reward: false,
+  fancybox: false,
+  zoom_image: {"enable":true,"mask_color":"rgba(0,0,0,0.6)"},
+  gallery_waterfall: undefined,
+  lazyload: undefined,
+  external_link: {"icon":{"enable":true,"name":"external-link"}},
+  shortcuts: {"switch_post":false},
+  notification: {"copy_success":"复制成功","copy_error":"复制失败"}
+};
+
+window.CONFIG = CONFIG;</script></head><body><div id="container"><header id="header" style="background-image: url(/images/qiyu.png)"><nav class="header-nav slider-up"><div class="header-nav-inner"><div class="fa fa-bars header-nav-menu-icon"></div><div class="header-nav-search"><i class="fa fa-search"></i><span>搜索</span></div><div class="header-nav-menu"><span><a href="/"><i class="fa fa-home"></i>首页</a></span><span><a href="/archives/"><i class="fa fa-folder-open"></i>归档</a></span><span><a href="/categories/"><i class="fa fa-th"></i>分类</a></span><span><a href="/tags/"><i class="fa fa-tags"></i>标签</a></span><span><a href="/about/"><i class="fa fa-user"></i>关于</a></span><span><a href="/photoAlbum/"><i class="fa fa-photo"></i>相册</a></span><span><a href="/friendLinks/"><i class="fa fa-handshake-o"></i>友链</a></span></div></div></nav><div class="header-info"><div class="header-info-inner"><div class="header-info-title">KaiWu'Blog</div><div class="header-info-subtitle">热爱生活，记录与分享</div></div></div></header><main id="main"><div class="main-inner"><aside id="sidebar"><div class="sidebar-inner"><div class="sidebar-nav"><span class="sidebar-nav-toc current">文章目录</span><span class="sidebar-nav-overview">站点概览</span></div><section class="sidebar-toc"><div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Problem-Description"><span class="toc-number">1.</span> <span class="toc-text">Problem Description</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Input"><span class="toc-number">1.1.</span> <span class="toc-text">Input</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Output"><span class="toc-number">1.2.</span> <span class="toc-text">Output</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Sample-Input"><span class="toc-number">1.3.</span> <span class="toc-text">Sample Input</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Sample-Output"><span class="toc-number">1.4.</span> <span class="toc-text">Sample Output</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#主要思路"><span class="toc-number">2.</span> <span class="toc-text">主要思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#归并操作"><span class="toc-number">3.</span> <span class="toc-text">归并操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码（C-）"><span class="toc-number">4.</span> <span class="toc-text">代码（C++）</span></a></li></ol></div></section><section class="hide sidebar-overview"><div class="sidebar-author"><img class="sidebar-author-avatar" src="/images/qiyu_icon.png" alt="avatar"><p class="sidebar-author-motto">始于热爱，源于坚持</p></div><div class="sidebar-social"><span class="sidebar-social-item"><a href="https://github.com/kaiwu119" target="_blank" rel="noopener" data-popover="Github" data-popover-pos="up"><i class="fa fa-github"></i></a></span><span class="sidebar-social-item"><a href="https://blog.csdn.net/qq_31804159" target="_blank" rel="noopener" data-popover="social.csdn" data-popover-pos="up"><span>csdn</span></a></span><span class="sidebar-social-item"><a href="1191762685" target="_blank" rel="noopener" data-popover="QQ" data-popover-pos="up"><i class="fa fa-qq"></i></a></span></div><div class="sidebar-feed"><span class="sidebar-feed-rss"><a href="/atom.xml" target="_blank" rel="noopener"><i class="fa fa-rss sidebar-feed-icon"></i><span>RSS </span><span>订阅</span></a></span></div><div class="sidebar-state"><span class="sidebar-state-item sidebar-state-posts"><a href="/archives/"><div class="sidebar-state-item-count">5</div><div class="sidebar-state-item-name">归档</div></a></span><span class="sidebar-state-item sidebar-state-categories"><a href="/categories/"><div class="sidebar-state-item-count">4</div><div class="sidebar-state-item-name">分类</div></a></span><span class="sidebar-state-item sidebar-state-tags"><a href="/tags/"><div class="sidebar-state-item-count">9</div><div class="sidebar-state-item-name">标签</div></a></span></div><div class="sidebar-cc"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" target="_blank" rel="noopener" data-popover="Creative Commons" data-popover-pos="up"><img src="/images/cc-by-nc-sa.svg" alt="creative commons"></a></div></section><div class="sidebar-progress"><div class="sidebar-progress-read"><span>你已阅读了</span><span class="sidebar-progress-number"></span></div><div class="sidebar-progress-line"></div></div></div></aside><div class="content headings code-highlight"><header class="post-header"><h1 class="post-title">Count Inversion ( Divide and Conquer)</h1><div class="post-meta"><span class="post-create"><i class="fa fa-calendar-o"></i><span>发表于 </span><span>2019-10-15</span></span><span class="post-update"><i class="fa fa-calendar-check-o"></i><span>更新于 </span><span>2019-10-15</span></span><span class="post-reading-count"><i class="fa fa-eye"></i><span>阅读次数 </span><span id="busuanzi_value_page_pv"></span></span></div></header><div class="post-body"><h2 id="Problem-Description"><a href="#Problem-Description" class="headerlink" title="Problem Description"></a><strong>Problem Description</strong></h2><p>Recall the problem of finding the number of inversions. As in the course, we are given a sequence of <strong>n</strong> numbers a1,a2,⋯,an，and we define an inversion to be a pair i<j such that ai>aj</j></p>
+<p>We motivated the problem of counting inversions as a good measure of how different two orderings are. However, one might feel that this measure is too sensitive. Let’s call a pair a significant inversion if <strong>i&lt;j</strong> and <strong>ai&gt;3aj</strong>. Give an <strong>O(nlogn)</strong> algorithm to count the number of significant inversions between two orderings.</p>
+<p>The array contains N elements (1&lt;=N&lt;=100,000). All elements are in the range from 1 to 1,000,000,000.</p>
+<h3 id="Input"><a href="#Input" class="headerlink" title="Input"></a>Input</h3><p>The first line contains one integer N, indicating the size of the array. The second line contains N elements in the array.</p>
+<ul>
+<li>50% test cases guarantee that N &lt; 1000.</li>
+</ul>
+<h3 id="Output"><a href="#Output" class="headerlink" title="Output"></a>Output</h3><p>Output a single integer which is the number of pairs of significant inversions.</p>
+<h3 id="Sample-Input"><a href="#Sample-Input" class="headerlink" title="Sample Input"></a>Sample Input</h3><figure class="highlight plain"><div style="overflow: auto"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">6</span><br><span class="line">13 8 5 3 2 1</span><br></pre></td></tr></table></div></figure>
+
+<h3 id="Sample-Output"><a href="#Sample-Output" class="headerlink" title="Sample Output"></a>Sample Output</h3><figure class="highlight plain"><div style="overflow: auto"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">6</span><br></pre></td></tr></table></div></figure>
+
+<h2 id="主要思路"><a href="#主要思路" class="headerlink" title="主要思路"></a><strong>主要思路</strong></h2><p>这一题是求解逆序数的变形题，仅仅是改变了<strong>ai&gt;3aj</strong>这一条件，但是基本解题思路是一样的，使用了分治的策略，具体操作其实就是在归并排序的过程中记录一下“逆序数”的个数（这题的逆序数表示的是前面的数大于后面的数的三倍）。所以只需要写一个归并排序就能够解决这一问题，下面简单回顾一下归并排序。</p>
+<h2 id="归并操作"><a href="#归并操作" class="headerlink" title="归并操作"></a><strong>归并操作</strong></h2><p>归并操作(merge)，也叫归并算法，指的是将两个顺序序列合并成一个顺序序列的方法。（百度百科）</p>
+<p>下面一个动态图，很直观的展示了归并的具体操作（来源<span class="external-link"><a href="https://www.jianshu.com/p/33cffa1ce613）" target="_blank" rel="noopener">https://www.jianshu.com/p/33cffa1ce613）</a><i class="fa fa-external-link"></i></span></p>
+<img width="800" src="/2019/10/15/Count-Inversion-Divide-and-Conquer/merge.gif">
+
+
+
+<p>下面另举一个实例，这个例子来自<span class="external-link"><a href="https://baike.baidu.com/item/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F/1639015?fr=aladdin" target="_blank" rel="noopener">百度百科</a><i class="fa fa-external-link"></i></span>（这里的逆序数表示的单纯的前面的数大于后面的数)</p>
+<p>如设有数列{6，202，100，301，38，8，1}</p>
+<p>初始状态分为若干部分：{6}    {202}     {100}    {301}    {38}    {8}    {1}</p>
+<p>第一次归并后：{6,202},{100,301},{8,38},{1}，比较次数：3；</p>
+<p>第二次归并后：{6,100,202,301}，{1,8,38}，比较次数：4；</p>
+<p>第三次归并后：{1,6,8,38,100,202,301},比较次数：4；</p>
+<p>总的比较次数为：3+4+4=11；</p>
+<p>逆序数为14；</p>
+<h2 id="代码（C-）"><a href="#代码（C-）" class="headerlink" title="代码（C++）"></a><strong>代码（C++）</strong></h2><figure class="highlight c++"><div style="overflow: auto"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span>  <span class="title">Merge</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> *a,<span class="keyword">unsigned</span> <span class="keyword">int</span> b,<span class="keyword">unsigned</span> <span class="keyword">int</span> m,<span class="keyword">unsigned</span> <span class="keyword">int</span> e,<span class="keyword">unsigned</span> <span class="keyword">int</span> &amp;Count)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> i =b;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> j = m+<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> nb = e-b+<span class="number">1</span>; <span class="comment">//之后数组的长度</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> *mer = <span class="keyword">new</span> <span class="keyword">unsigned</span> <span class="keyword">int</span>[nb];</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(i&lt;=m&amp;&amp;j&lt;=e)</span><br><span class="line">    &#123;</span><br><span class="line">         <span class="keyword">if</span>(a[i]&gt;<span class="number">3</span>*a[j])<span class="comment">//如果条件为a[i]&gt;a[j]则为普通的逆序数程序</span></span><br><span class="line">        &#123;</span><br><span class="line">           <span class="comment">//注意，这里a[i]一旦满足逆序数条件则在i之后的所有数都满足逆序数条件（因为待合并的两个数组是有序的）</span></span><br><span class="line">            Count+=m-i+<span class="number">1</span>;</span><br><span class="line">            j++;</span><br><span class="line">        &#125; <span class="keyword">else</span>&#123;</span><br><span class="line">           i++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//合并操作</span></span><br><span class="line">    i = b;</span><br><span class="line">    j = m+<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span>(i&lt;=m&amp;&amp;j&lt;=e)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(a[i]&lt;a[j])</span><br><span class="line">        &#123;</span><br><span class="line">            mer[index++] = a[i];</span><br><span class="line">            i++;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">             mer[index++] = a[j];</span><br><span class="line">             j++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(i&lt;=m)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span>( <span class="keyword">unsigned</span> <span class="keyword">int</span> k = i; k&lt;= m; k++)</span><br><span class="line">            mer[index++] = a[k];</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(j&lt;=e)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span>( <span class="keyword">unsigned</span> <span class="keyword">int</span> k = j; k&lt;= e;k++)</span><br><span class="line">            mer[index++] = a[k];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>( <span class="keyword">unsigned</span> <span class="keyword">int</span> k = <span class="number">0</span>; k&lt;nb; k++)</span><br><span class="line">    &#123;</span><br><span class="line">        a[b+k] = mer[k];</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">MergeSort</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> *a, <span class="keyword">unsigned</span> <span class="keyword">int</span> b, <span class="keyword">unsigned</span> <span class="keyword">int</span> e,<span class="keyword">unsigned</span> <span class="keyword">int</span> &amp;Count)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(b&gt;=e)</span><br><span class="line">        <span class="keyword">return</span> ;</span><br><span class="line">    <span class="keyword">if</span>( b&lt;e)&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> mid = (b+e)/<span class="number">2</span>;</span><br><span class="line">    MergeSort(a,b,mid,Count);</span><br><span class="line">    MergeSort(a,mid+<span class="number">1</span>,e,Count);</span><br><span class="line">    Merge(a,b,mid,e,Count);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> n;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;n);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> *a = <span class="keyword">new</span> <span class="keyword">unsigned</span> <span class="keyword">int</span>[n];</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">unsigned</span> <span class="keyword">int</span> i =<span class="number">0</span>; i&lt; n; i++)</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;a[i]);</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> c = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    MergeSort(a,<span class="number">0</span>,n<span class="number">-1</span>,c);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%d"</span>,c);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></div></figure>
+
+</div><footer class="post-footer"><div class="post-footer-end"><span>------</span><span>本文结束，感谢您的阅读</span><span>------</span></div><div class="post-copyright"><div class="copyright-author"><span class="copyright-name">本文作者:</span><span class="copyright-value"><a href="https://kaiwu119.github.io">KaiWu</a></span></div><div class="copyright-link"><span class="copyright-name">本文链接:</span><span class="copyright-value"><a href="https://kaiwu119.github.io/2019/10/15/Count-Inversion-Divide-and-Conquer/">https://kaiwu119.github.io/2019/10/15/Count-Inversion-Divide-and-Conquer/</a></span></div><div class="copyright-notice"><span class="copyright-name">版权声明:</span><span class="copyright-value">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" rel="external nofollow" target="_blank">BY-NC-SA</a> 许可协议。转载请注明出处！</span></div></div><div class="post-footer-tags"><i class="fa fa-tags icon"></i><span><a href="https://kaiwu119.github.io/tags/算法/" title="算法">算法</a></span><span><a href="https://kaiwu119.github.io/tags/C/" title="C++">C++</a></span></div><nav id="paginator"><div class="post-paginator"><div class="article-next pull-right"><a href="/2019/10/12/Majority-Element-divide-and-conquer/"><span class="title">Majority Element (divide and conquer)</span><i class="fa fa-chevron-right"></i></a></div></div></nav></footer></div><div class="comments content" id="comments"></div><div class="clearfix"></div></div></main><footer id="footer"><div class="footer-inner"><div><span>&copy; 2019</span><span class="fa fa-heart heart-beat footer-separator" style="color: #ff0000"></span><span>KaiWu.</span></div><div><span class="footer-powered">由 <a href="http://hexo.io/" title="hexo" target="_blank" rel="noopener">hexo</a> 强力驱动</span><span> v3.9.0.</span><span class="footer-separator">|</span><span>主题 - <a href="https://github.com/liuyib/hexo-theme-stun/" title="stun" target="_blank" rel="noopener">stun</a></span><span> v1.2.2.</span></div><div class="busuanzi"><span class="busuanzi-uv"><i class="fa fa-user"></i><span>访问人数 </span><span id="busuanzi_value_site_uv"></span></span><span class="separator">|</span><span class="busuanzi-pv"><i class="fa fa-eye"></i><span>浏览总量 </span><span id="busuanzi_value_site_pv"></span></span></div></div></footer><div id="back-top"><div class="back-top-inner" data-popover="回到顶部" data-popover-pos="up"><i class="fa fa-rocket"></i></div></div></div><div class="localsearch-mask"></div><div class="localsearch-popup"><div class="localsearch-input-wrapper"><input placeholder="搜索文章"></div><span class="localsearch-close"><i class="fa fa-times"></i></span><div class="localsearch-result"></div></div><script>if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+  window.Promise = null;
+}
+</script><script src="https://cdn.jsdelivr.net/npm/jquery@v3.4.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.ui.min.js"></script><script src="/js/utils.js?v=1.2.2"></script><script src="/js/stun-boot.js?v=1.2.2"></script><script src="/js/copy.js?v=1.2.2"></script><script src="/js/scroll.js?v=1.2.2"></script><script src="/js/header.js?v=1.2.2"></script><script src="/js/sidebar.js?v=1.2.2"></script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":0,"vOffset":-20},"react":{"opacityDefault":0.5,"opacityOnHover":0.5,"opacity":0.7},"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body></html>
